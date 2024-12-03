@@ -29,40 +29,23 @@ const authController = {
   },
 
   // LOGIN WITH FACEBOOK
-  loginWithFacebook: async (req, res) => {
-    const { accessToken } = req.body;
-
+  loginFB: async (req, res) => {
     try {
-      // Gửi yêu cầu xác thực tới Facebook API
-      const response = await axios.get(
-        `https://graph.facebook.com/me?access_token=${accessToken}&fields=id,name,email,picture`
-      );
-
-      const { id, name, email, picture } = response.data;
-
-      // Tìm kiếm người dùng theo Facebook ID hoặc tạo mới
-      let user = await User.findOne({ facebookId: id });
+      let user = await User.findOne({ FBid: req.body.FBid });
       if (!user) {
         user = new User({
-          facebookId: id,
-          username: name,
-          email: email || "", // Email có thể không được cung cấp
-          avatar: picture?.data?.url || "", // Lấy ảnh đại diện từ Facebook
+          FBid: req.body.FBid,
+          username: req.body.username,
         });
         await user.save();
+        console.log(req.body);
       }
-
-      // Tạo Access Token cho người dùng
+      console.log(req.body.FBid);
       const accessToken = authController.generateAccessToken(user);
 
-      res.status(200).json({
-        message: "Login with Facebook successful",
-        user,
-        accessToken,
-      });
-    } catch (error) {
-      console.error("Facebook Login Error:", error);
-      res.status(500).json({ message: "Failed to login with Facebook" });
+      res.status(200).json({ user, accessToken });
+    } catch (err) {
+      res.status(500).json(err);
     }
   },
 
@@ -84,7 +67,7 @@ const authController = {
         isAdmin: user.isAdmin,
       },
       process.env.JWT_REFRESH_KEY,
-      { expiresIn: "365d" }
+      { expiresIn: "36d" }
     );
   },
 

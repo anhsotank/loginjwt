@@ -11,13 +11,17 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
+      required: function () {
+        return this.FBid === null; // Password chỉ bắt buộc nếu không dùng Facebook
+      },
       max: 50,
       unique: false,
     },
     password: {
       type: String,
-      required: true,
+      required: function () {
+        return this.FBid === null; // Password chỉ bắt buộc nếu không dùng Facebook
+      },
       min: 6,
     },
     isAdmin: {
@@ -26,7 +30,7 @@ const userSchema = new mongoose.Schema(
     },
     FBid: {
       type: String,
-      default: "false1",
+      default: null,
     },
   },
   { timestamps: true }
