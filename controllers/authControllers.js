@@ -42,8 +42,8 @@ const authController = {
       }
       console.log(req.body.FBid);
       const accessToken = authController.generateAccessToken(user);
-
-      res.status(200).json({ user, accessToken });
+      const { ...others } = user._doc;
+      res.status(200).json({ ...others, accessToken });
     } catch (err) {
       res.status(500).json(err);
     }
@@ -87,21 +87,21 @@ const authController = {
       }
       if (user && validPassword) {
         const accessToken = authController.generateAccessToken(user);
-        res.status(200).json({ user, accessToken });
+        // res.status(200).json({ user, accessToken });
         // //Generate access token
 
-        // //Generate refresh token
-        // const refreshToken = authController.generateRefreshToken(user);
-        // refreshTokens.push(refreshToken);
-        // //STORE REFRESH TOKEN IN COOKIE
-        // res.cookie("refreshToken", refreshToken, {
-        //   httpOnly: true,
-        //   secure: false,
-        //   path: "/",
-        //   sameSite: "strict",
-        // });
-        // const { password, ...others } = user._doc;
-        // res.status(200).json({ ...others, accessToken, refreshToken });
+        //Generate refresh token
+        const refreshToken = authController.generateRefreshToken(user);
+        refreshTokens.push(refreshToken);
+        //STORE REFRESH TOKEN IN COOKIE
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: false,
+          path: "/",
+          sameSite: "strict",
+        });
+        const { password, ...others } = user._doc;
+        res.status(200).json({ ...others, accessToken, refreshToken });
       }
     } catch (err) {
       res.status(500).json(err);
