@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const authRoute = require("./routes/auth");
 const userRoute = require("./routes/user");
+const movieRoute = require("./routes/movie");
 
 dotenv.config();
 const app = express();
@@ -25,6 +26,8 @@ app.use(express.json());
 //ROUTES
 app.use("/v1/auth", authRoute);
 app.use("/v1/user", userRoute);
+app.use("/v1/movie", movieRoute);
+
 app.get("/anh", (req, res) => {
   res.json({ status: "succs" });
 });

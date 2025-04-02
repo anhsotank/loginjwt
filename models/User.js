@@ -32,6 +32,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    favoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: "Movie" }], // Danh sách phim yêu thích
   },
   { timestamps: true }
 );

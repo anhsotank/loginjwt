@@ -1,4 +1,5 @@
 const userController = require("../controllers/userControllers");
+
 const {
   verifyToken,
   verifyTokenAndAdmin,
@@ -14,6 +15,15 @@ router.delete(
   "/:id",
   verifyTokenAndUserAuthorization,
   userController.deleteUser
+);
+
+//favorite
+router.post("/favorite/:movieId", verifyToken, userController.favoriteMovie);
+router.get("/favorite", verifyToken, userController.getfavoriteMovie);
+router.delete(
+  "/favorite/:movieId",
+  verifyToken,
+  userController.deletefavoriteMovie
 );
 
 module.exports = router;
