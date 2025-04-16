@@ -1,5 +1,9 @@
 const movieController = require("../controllers/movieControllers");
-const { verifyToken } = require("../controllers/verifyToken");
+const {
+  verifyToken,
+  verifyTokenAndAdmin,
+  upload,
+} = require("../controllers/verifyToken");
 const router = require("express").Router();
 
 //search
@@ -7,10 +11,20 @@ router.get("/search", movieController.searchMovie);
 //////movie
 router.get("/", movieController.getAllMovie);
 router.get("/:movieId", movieController.getlMovie);
-router.post("/createmovie", movieController.createMovies);
+router.post(
+  "/createmovie",
+  upload.single("image"),
+  verifyToken,
+  movieController.createMovies
+);
 
 router.delete("/deletemovie/:movieId", movieController.deleteMovie);
-router.put("/updatemovie/:movieId", movieController.updateMovie);
+router.put(
+  "/updatemovie/:movieId",
+  upload.single("image"),
+  verifyToken,
+  movieController.updateMovie
+);
 
 //comment
 router.post(
@@ -18,11 +32,17 @@ router.post(
   verifyToken,
   movieController.createcommentMovie
 );
-router.get("/:movieId/comments", verifyToken, movieController.getcommentMovie);
+router.get("/:movieId/comments", movieController.getcommentMovie);
 router.delete(
   "/comments/:commentId",
   verifyToken,
   movieController.deletecommentMovie
+);
+
+router.put(
+  "/:commentId/updatecomments",
+  verifyToken,
+  movieController.updateComment
 );
 
 module.exports = router;

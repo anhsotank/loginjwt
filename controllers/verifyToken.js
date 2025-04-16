@@ -1,4 +1,6 @@
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
+const path = require("path");
 
 const verifyToken = (req, res, next) => {
   //ACCESS TOKEN FROM HEADER, REFRESH TOKEN FROM COOKIE
@@ -38,8 +40,22 @@ const verifyTokenAndAdmin = (req, res, next) => {
   });
 };
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // thư mục lưu ảnh (tạo nếu chưa có)
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const filename = Date.now() + "-" + file.fieldname + ext;
+    cb(null, filename);
+  },
+});
+
+const upload = multer({ storage });
+
 module.exports = {
   verifyToken,
   verifyTokenAndUserAuthorization,
   verifyTokenAndAdmin,
+  upload,
 };

@@ -22,7 +22,7 @@ const userController = {
   },
 
   //FAVORITES MOVIE
-  favoriteMovie: async (req, res) => {
+  addfavoriteMovie: async (req, res) => {
     const { movieId } = req.params;
     const userId = req.user.id; // Lấy từ middleware xác thực
 

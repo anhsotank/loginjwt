@@ -27,6 +27,7 @@ app.use(express.json());
 app.use("/v1/auth", authRoute);
 app.use("/v1/user", userRoute);
 app.use("/v1/movie", movieRoute);
+app.use("/uploads", express.static("uploads"));
 
 app.get("/anh", (req, res) => {
   res.json({ status: "succs" });

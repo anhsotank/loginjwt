@@ -14,10 +14,11 @@ const movieSchema = new mongoose.Schema(
       max: 200,
       unique: false,
     },
-    srcImage: {
+    image: {
       type: String,
       unique: false,
     },
+
     description: {
       type: String,
       max: 200,

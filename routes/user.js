@@ -3,6 +3,7 @@ const userController = require("../controllers/userControllers");
 const {
   verifyToken,
   verifyTokenAndAdmin,
+  upload,
   verifyTokenAndUserAuthorization,
 } = require("../controllers/verifyToken");
 
@@ -18,10 +19,14 @@ router.delete(
 );
 
 //favorite
-router.post("/favorite/:movieId", verifyToken, userController.favoriteMovie);
+router.post(
+  "/addfavorite/:movieId",
+  verifyToken,
+  userController.addfavoriteMovie
+);
 router.get("/favorite", verifyToken, userController.getfavoriteMovie);
 router.delete(
-  "/favorite/:movieId",
+  "/deletefavorite/:movieId",
   verifyToken,
   userController.deletefavoriteMovie
 );
