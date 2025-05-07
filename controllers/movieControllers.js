@@ -1,6 +1,7 @@
 const Movie = require("../models/Movie");
 const Comment = require("../models/Comment");
 const User = require("../models/User");
+const Genre = require("../models/Genre");
 const fs = require("fs");
 const path = require("path");
 
@@ -8,7 +9,8 @@ const movieController = {
   //Create movie
   createMovies: async (req, res) => {
     try {
-      const { moviename, releaseYear, description, srcVideo } = req.body;
+      const { moviename, releaseYear, description, srcVideo, genre, actors } =
+        req.body;
 
       // Kiểm tra nếu thiếu dữ liệu
       if (!moviename || !releaseYear || !description) {
@@ -25,6 +27,8 @@ const movieController = {
         releaseYear,
         description,
         srcVideo,
+        genre,
+        actors,
         image: imageUrl,
       });
       return res.status(201).json({ message: "Thêm phim thành công", movie });
@@ -39,7 +43,9 @@ const movieController = {
   getAllMovie: async (req, res) => {
     try {
       console.log("Received search request for:");
-      const movie = await Movie.find().sort({ createdAt: -1 });
+      const movie = await Movie.find()
+        .populate("genre", "name")
+        .sort({ createdAt: -1 });
       res.status(200).json(movie);
     } catch (err) {
       res.status(500).json(err);
@@ -51,7 +57,7 @@ const movieController = {
     try {
       const { movieId } = req.params;
 
-      const movie = await Movie.findById(movieId);
+      const movie = await Movie.findById(movieId).populate("genre", "name"); // Lấy thông tin user;
       res.status(200).json(movie);
     } catch (err) {
       res.status(500).json(err);
@@ -108,6 +114,37 @@ const movieController = {
       res.status(200).json("Movie deleted");
     } catch (err) {
       res.status(500).json(err);
+    }
+  },
+
+  //view movie
+  addViewCount: async (req, res) => {
+    try {
+      const { movieId } = req.params;
+
+      const movie = await Movie.findByIdAndUpdate(
+        movieId,
+        { $inc: { views: 1 } }, // tăng 1 lượt xem
+        { new: true }
+      );
+
+      if (!movie) {
+        return res.status(404).json({ message: "Không tìm thấy phim." });
+      }
+
+      res.status(200).json({ message: "Tăng lượt xem", views: movie.views });
+    } catch (err) {
+      res.status(500).json({ message: "Lỗi server", error: err.message });
+    }
+  },
+
+  //  lấy top 5 phim được xem nhiều nhất
+  getTopViewedMovies: async (req, res) => {
+    try {
+      const movies = await Movie.find().sort({ views: -1 }).limit(5);
+      res.status(200).json(movies);
+    } catch (err) {
+      res.status(500).json({ message: "Lỗi server", error: err.message });
     }
   },
 

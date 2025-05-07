@@ -25,7 +25,10 @@ router.put(
   verifyToken,
   movieController.updateMovie
 );
-
+//view movie
+router.put("/:movieId/view", movieController.addViewCount);
+//get top 5 movie
+router.get("/top/viewed", movieController.getTopViewedMovies);
 //comment
 router.post(
   "/:movieId/createcomments",

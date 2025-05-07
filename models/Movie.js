@@ -29,6 +29,16 @@ const movieSchema = new mongoose.Schema(
       type: String,
       min: 6,
     },
+    genre: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Genre",
+    },
+    views: {
+      type: Number,
+      default: 0,
+    },
+    actors: [{ type: mongoose.Schema.Types.ObjectId, ref: "Actor" }],
+
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
   },
   { timestamps: true }

@@ -6,7 +6,8 @@ const cookieParser = require("cookie-parser");
 const authRoute = require("./routes/auth");
 const userRoute = require("./routes/user");
 const movieRoute = require("./routes/movie");
-
+const genreRoute = require("./routes/genre");
+const actorRoute = require("./routes/actor");
 dotenv.config();
 const app = express();
 
@@ -27,11 +28,10 @@ app.use(express.json());
 app.use("/v1/auth", authRoute);
 app.use("/v1/user", userRoute);
 app.use("/v1/movie", movieRoute);
+app.use("/v1/genre", genreRoute);
+app.use("/v1/actor", actorRoute);
 app.use("/uploads", express.static("uploads"));
 
-app.get("/anh", (req, res) => {
-  res.json({ status: "succs" });
-});
 app.listen(8300, () => {
   console.log("anh12345");
 });
