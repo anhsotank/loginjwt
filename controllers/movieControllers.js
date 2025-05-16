@@ -42,7 +42,6 @@ const movieController = {
   //GET ALL
   getAllMovie: async (req, res) => {
     try {
-      console.log("Received search request for:");
       const movie = await Movie.find()
         .populate("genre", "name")
         .sort({ createdAt: -1 });
@@ -57,7 +56,9 @@ const movieController = {
     try {
       const { movieId } = req.params;
 
-      const movie = await Movie.findById(movieId).populate("genre", "name"); // Lấy thông tin user;
+      const movie = await Movie.findById(movieId)
+        .populate("genre", "name")
+        .populate("actors", "name image");
       res.status(200).json(movie);
     } catch (err) {
       res.status(500).json(err);

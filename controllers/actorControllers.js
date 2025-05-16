@@ -1,5 +1,7 @@
 const Actor = require("../models/Actor");
 const Movie = require("../models/Movie");
+const path = require("path");
+const fs = require("fs");
 
 const ActorController = {
   //Get Actor
@@ -48,29 +50,63 @@ const ActorController = {
   // update Actor
   updateActor: async (req, res) => {
     try {
-      const updates = req.body;
+      const { name, bio, image: oldImage } = req.body;
+      let newImage = oldImage;
+
+      if (req.file) {
+        if (oldImage) {
+          const oldPath = path.join(__dirname, "../uploads/", oldImage);
+          if (fs.existsSync(oldPath)) {
+            fs.unlinkSync(oldPath);
+          }
+        }
+        newImage = req.file.filename;
+      }
+
       const updatedActor = await Actor.findByIdAndUpdate(
         req.params.actorId,
-        updates,
+        {
+          name,
+          bio,
+          image: newImage,
+        },
         { new: true }
       );
+
       res.status(200).json(updatedActor);
     } catch (err) {
-      res.status(500).json(err);
+      res.status(500).json({ error: "Cập nhật thất bại", detail: err.message });
     }
   },
 
   //  remove Actor
   deleteActor: async (req, res) => {
     try {
+      const actorId = req.params.actorId;
+
+      const actor = await Actor.findById(actorId);
+      if (!actor) return res.status(404).json("Không tìm thấy diễn viên!");
+
+      // Xóa file ảnh nếu có
+      if (actor.image) {
+        const filePath = path.join(__dirname, "../uploads/", actor.image);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+      }
+
+      // Xóa diễn viên khỏi tất cả các phim chứa actorId trong mảng actors
       await Movie.updateMany(
-        { actor: req.params.actorId },
-        { $unset: { Actor: "" } }
+        { actors: actorId },
+        { $pull: { actors: actorId } }
       );
-      await Actor.findByIdAndDelete(req.params.actorId);
-      res.status(200).json("Xóa thể loại thành công!");
+
+      // Xóa diễn viên khỏi bảng Actor
+      await Actor.findByIdAndDelete(actorId);
+
+      res.status(200).json("Xóa diễn viên và cập nhật phim thành công!");
     } catch (err) {
-      res.status(500).json(err);
+      res.status(500).json({ error: "Xóa thất bại", detail: err.message });
     }
   },
 };

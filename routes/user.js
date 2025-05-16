@@ -31,4 +31,14 @@ router.delete(
   userController.deletefavoriteMovie
 );
 
+router.get("/profile", verifyToken, userController.getProfile);
+router.put(
+  "/update",
+  verifyToken,
+  upload.single("image"),
+  userController.updateProfile
+);
+
+router.put("/password", verifyToken, userController.updatePassword);
+
 module.exports = router;

@@ -22,6 +22,7 @@ router.delete("/deleteactor/:actorId", actorController.deleteActor);
 router.put(
   "/updateactor/:actorId",
   verifyTokenAndAdmin,
+  upload.single("image"),
   actorController.updateActor
 );
 
